@@ -1,14 +1,13 @@
 %{
-            /*Definition Section*/
-    #include "y.tab.h"  
-    extern char yyval;  
+#include "y.tab.h"
+extern char yyval;
 %}
 
-
-            /*Regular Definitions*/
 %%
-    [0-9]+ { yylval.symbol = (char)(yytext[0]); return NUMBER; }  
-    [a-z]  { yylval.symbol = (char)(yytext[0]); return LETTER; }  
-    .      { return yytext[0]; }  
-    \n     { return 0; }  
+
+[0-9]+ { yylval.symbol = (char)(yytext[0]); return NUMBER; }
+[a-z]  { yylval.symbol = (char)(yytext[0]); return LETTER; }
+.      { return yytext[0]; }
+\n     { return 0; }
+
 %%
