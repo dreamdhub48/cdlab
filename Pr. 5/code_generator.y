@@ -1,137 +1,99 @@
+- code_generator.y
+
 %{
-            /*Definition Section*/
-    #include "y.tab.h"  
-    #include <stdio.h>  
-    char addtotable(char, char, char);  
+#include "y.tab.h"
+#include <stdio.h>
+#include <string.h>  /* For strcpy and handling strings */
 
-    int index1 = 0;  /* Index for storing expressions in the table */
-    char temp = 'A' - 1;  /* Temporary result variable initialized */
+int index1 = 0;  /* Index to track the expressions in the table */
+char temp = 'A' - 1;  /* Temporary variable for storing results */
+FILE fpOut;  / Output file pointer */
 
-    struct expr {
-        char operand1;
-        char operand2;
-        char operator;
-        char result;
-    };
+/* Structure to store operands, operators, and results */
+struct expr {
+    char operand1;
+    char operand2;
+    char operator;
+    char result;
+};
 
-        /*Union Section*/
-    %union {
-        char symbol;
-    }
+%}
 
-        /*Precedence and Associativity*/
-    %left '+' '-'
-    %left '*' '/' 
+%union {
+    char symbol;
+}
 
-        /*Tokens Section*/
-    %token <symbol> LETTER NUMBER
-    %type <symbol> exp
-
-        /*Grammar Rules*/
-%%
-    statement:
-        LETTER '=' exp ';' { addtotable((char)$1, (char)$3, '='); };  
-
-    exp:
-        exp '+' exp { $$ = addtotable((char)$1, (char)$3, '+'); }   /* Addition */
-        | exp '-' exp { $$ = addtotable((char)$1, (char)$3, '-'); }  /* Subtraction */
-        | exp '/' exp { $$ = addtotable((char)$1, (char)$3, '/'); }  /* Division */
-        | exp '*' exp { $$ = addtotable((char)$1, (char)$3, '*'); }  /* Multiplication */
-        | '(' exp ')' { $$ = (char)$2; }  /* Parentheses */
-        | NUMBER { $$ = (char)$1; }  /* Number */
-        | LETTER { $$ = (char)$1; }   /* Variable */
-        ;
+%left '+' '-'
+%left '*' '/'
+%token <symbol> LETTER NUMBER
+%type <symbol> expression
 
 %%
 
-            /*Subroutine Section*/
+input:
+    line '\n' input
+    | '\n' input
+    | ;
 
-        /* Error Handling Function */
-    void yyerror(char *s) {
-        printf("Error: %s\n", s);
+line:
+    LETTER '=' expression {
+        fprintf(fpOut, "MOV %s, AX\n", $1);  /* Store the result in AX */
+        fprintf(fpOut, "MOV %s, AX\n", $1);  /* Example for storing the result */
+    }
+    ;
+
+expression:
+    LETTER '+' LETTER {
+        fprintf(fpOut, "MOV AX, %s\n", $1);
+        fprintf(fpOut, "ADD AX, %s\n", $3);
+        $$ = $1;  /* Temporary result assignment */
+    }
+    | LETTER '-' LETTER {
+        fprintf(fpOut, "MOV AX, %s\n", $1);
+        fprintf(fpOut, "SUB AX, %s\n", $3);
+        $$ = $1;
+    }
+    | LETTER '*' LETTER {
+        fprintf(fpOut, "MOV AX, %s\n", $1);
+        fprintf(fpOut, "MUL AX, %s\n", $3);
+        $$ = $1;
+    }
+    | LETTER '/' LETTER {
+        fprintf(fpOut, "MOV AX, %s\n", $1);
+        fprintf(fpOut, "DIV AX, %s\n", $3);
+        $$ = $1;
+    }
+    | LETTER {
+        fprintf(fpOut, "MOV AX, %s\n", $1);
+        strcpy($$, $1);  /* Copy the result to the $$ symbol */
+    }
+    ;
+
+%%
+
+int main() {
+    FILE *fpInput;
+
+    fpInput = fopen("input.txt", "r");
+    if (fpInput == NULL) {
+        printf("Error reading input file.\n");
+        exit(0);
     }
 
-        /* Function to add expressions to the table */
-    char addtotable(char a, char b, char o) {
-        temp++;  /* Increment temporary result variable */
-        arr[index1].operand1 = a;
-        arr[index1].operand2 = b;
-        arr[index1].operator = o;
-        arr[index1].result = temp;
-        index1++;  /* Increment index */
-        return temp;
+    fpOut = fopen("output.txt", "w");
+    if (fpOut == NULL) {
+        printf("Error creating output file.\n");
+        exit(0);
     }
 
-        /* Print Three-Address Code */
-    void threeAdd() {
-        int i = 0;
-        while (i < index1) {
-            printf("%c :=\t", arr[i].result);
-            printf("%c\t", arr[i].operand1);
-            printf("%c\t", arr[i].operator);
-            printf("%c\t", arr[i].operand2);
-            i++;
-            printf("\n");
-        }
-    }
+    yyin = fpInput;
+    yyparse();  /* Start parsing */
 
-        /* Print Four-Address Code */
-    void fouradd() {
-        int i = 0;
-        while (i < index1) {
-            printf("%c\t", arr[i].operator);
-            printf("%c\t", arr[i].operand1);
-            printf("%c\t", arr[i].operand2);
-            printf("%c", arr[i].result);
-            i++;
-            printf("\n");
-        }
-    }
+    fclose(fpInput);
+    fclose(fpOut);
+    return 0;
+}
 
-        /* Find the index of a given label */
-    int find(char l) {
-        int i;
-        for (i = 0; i < index1; i++) {
-            if (arr[i].result == l) break;
-        }
-        return i;
-    }
-
-        /* Print Triple Address Code */
-    void triple() {
-        int i = 0;
-        while (i < index1) {
-            printf("%c\t", arr[i].operator);
-            if (!isupper(arr[i].operand1))
-                printf("%c\t", arr[i].operand1);
-            else {
-                printf("pointer");
-                printf("%d\t", find(arr[i].operand1));
-            }
-            if (!isupper(arr[i].operand2))
-                printf("%c\t", arr[i].operand2);
-            else {
-                printf("pointer");
-                printf("%d\t", find(arr[i].operand2));
-            }
-            i++;
-            printf("\n");
-        }
-    }
-
-    /* YYWRAP Function */
-    int yywrap() {
-        return 1;
-    }
-
-        /* Main Function */
-    int main() {
-        printf("Enter the expression: ");
-        yyparse();  /* Start parsing the input expression */
-        threeAdd();  /* Print Three-Address Code */
-        printf("\n");
-        fouradd();  /* Print Four-Address Code */
-        printf("\n");
-        triple();  /* Print Triple Address Code */
-        return 0;
-    }
+void yyerror(char *s) {
+    printf("Error: %s\n", s);
+}
