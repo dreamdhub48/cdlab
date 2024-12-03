@@ -1,0 +1,257 @@
+Commands to execute each program
+---
+
+Practical 1: Lexical Analyzer for a Subset of C
+
+1. Create Input File:
+
+- gedit input.txt
+
+Add the required input (e.g., C program code) and save it.
+
+
+2. Create LEX File:
+
+- gedit lex_analyzer.l
+
+Paste the LEX code for the lexical analyzer and save the file.
+
+
+
+Compile and Run:
+
+1. Generate the lexer:
+
+- flex lex_analyzer.l
+
+
+2. Compile the lexer:
+
+- gcc lex.yy.c -ll
+
+
+3. Execute the program:
+
+- ./a.out input.txt
+
+
+
+
+---
+
+Practical 2: Lexical Analyzer for Identifying Numbers
+
+1. Create Input File:
+
+- gedit input.txt
+
+Add the required input (e.g., various numbers) and save it.
+
+
+2. Create LEX File:
+
+- gedit num_Identifier.l
+
+Paste the LEX code for identifying numbers and save the file.
+
+
+
+Compile and Run:
+
+1. Generate the lexer:
+
+- flex num_Identifier.l
+
+
+2. Compile the lexer:
+
+- gcc lex.yy.c -ll
+
+
+3. Execute the program:
+
+- ./a.out input.txt
+
+
+
+
+---
+
+Practical 3: Calculator Using LEX and YACC
+
+1. Create LEX File:
+
+- gedit calculator.l
+
+Paste the LEX code for the calculator and save the file.
+
+
+2. Create YACC File:
+
+- gedit calculator.y
+
+Paste the YACC code for the calculator and save the file.
+
+
+
+Compile and Run:
+
+1. Generate the lexer:
+
+flex calculator.l
+
+
+2. Generate the parser:
+
+- bison -d calculator.y
+
+
+3. Compile both:
+
+- gcc lex.yy.c y.tab.c -ll -ly
+
+
+4. Execute the program:
+
+- ./a.out
+
+
+
+
+---
+
+Practical 4: Context-Free Grammar (CFG)
+
+1. Create LEX File:
+
+- gedit cfg.l
+
+Paste the LEX code for CFG and save the file.
+
+
+2. Create YACC File:
+
+- gedit cfg.y
+
+Paste the YACC code for CFG and save the file.
+
+
+
+Compile and Run:
+
+1. Generate the lexer:
+
+- flex cfg.l
+
+
+2. Generate the parser:
+
+- bison -d cfg.y
+
+
+3. Compile both:
+
+- gcc lex.yy.c y.tab.c -ll -ly
+
+
+4. Execute the program:
+
+- ./a.out
+
+
+
+
+---
+
+Practical 5: Code Generator
+
+1. Create LEX File:
+
+- gedit code_generator.l
+
+Paste the LEX code for the code generator and save the file.
+
+
+2. Create YACC File:
+
+- gedit code_generator.y
+
+Paste the YACC code for the code generator and save the file.
+
+
+
+Compile and Run:
+
+1. Generate the lexer:
+
+- flex code_generator.l
+
+
+2. Generate the parser:
+
+- bison -d code_generator.y
+
+
+3. Compile both:
+
+- gcc lex.yy.c y.tab.c -ll -ly
+
+
+4. Execute the program:
+
+- ./a.out
+
+
+
+
+---
+
+Practical 6: Deterministic Finite Automaton (DFA)
+
+1. Create LEX File:
+
+- gedit dfa.l
+
+Paste the LEX code for DFA and save the file.
+
+
+2. Create YACC File:
+
+- gedit dfa.y
+
+Paste the YACC code for DFA and save the file.
+
+
+
+Compile and Run:
+
+1. Generate the lexer:
+
+- flex dfa.l
+
+
+2. Generate the parser:
+
+- bison -d dfa.y
+
+
+3. Compile both:
+
+- gcc lex.yy.c y.tab.c -ll -ly
+
+
+4. Execute the program:
+
+- ./a.out
+
+
+
+
+---
+
+General Notes:
+
+Ensure flex, bison, and gcc are installed using:
+
+- sudo apt update
+- sudo apt install flex bison gcc
